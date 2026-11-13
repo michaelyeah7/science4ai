@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Science4AI: what AI needs from the scientific record</title>
+<meta name="description" content="A working guide to AI-ready scientific data: what to record at the bench, how to structure it, and why the reasoning behind an experiment belongs in the dataset.">
+<meta name="author" content="Guo Ye">
+<link rel="canonical" href="https://science4ai.org/">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Science4AI">
+<meta property="og:title" content="A paper reports three wells. A model needs all ninety-six.">
+<meta property="og:description" content="A working guide to AI-ready scientific data: what to record at the bench, how to structure it, and why the reasoning behind an experiment belongs in the dataset.">
+<meta property="og:url" content="https://science4ai.org/">
+<meta property="og:image" content="https://science4ai.org/assets/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A 96-well plate drawn as colored dots beside the headline: A paper reports three wells. A model needs all ninety-six.">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+<link rel="preload" href="assets/fonts/ibm-plex-serif-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Science4AI",
+  "url": "https://science4ai.org/",
+  "description": "A working guide to AI-ready scientific data: what to record at the bench, how to structure it, and why the reasoning behind an experiment belongs in the dataset.",
+  "inLanguage": "en",
+  "author": { "@type": "Person", "name": "Guo Ye", "url": "https://michaelyeah7.github.io/" }
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head" id="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Science4AI, back to top">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="3.2" cy="3.2" r="2.6" fill="#440154"/><circle cx="10" cy="3.2" r="2.6" fill="#3b528b"/><circle cx="16.8" cy="3.2" r="2.6" fill="#21918c"/><circle cx="3.2" cy="10" r="2.6" fill="#3b528b"/><circle cx="10" cy="10" r="2.6" fill="#21918c"/><circle cx="16.8" cy="10" r="2.6" fill="#5ec962"/><circle cx="3.2" cy="16.8" r="2.6" fill="#21918c"/><circle cx="10" cy="16.8" r="2.6" fill="#5ec962"/><circle cx="16.8" cy="16.8" r="2.6" fill="#fde725"/></svg>
+      Science4AI
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Contents</button>
+    <nav class="site-nav" id="site-nav" aria-label="Sections">
+      <ul>
+        <li><a href="#premise">Premise</a></li>
+        <li><a href="#questions">Eight questions</a></li>
+        <li><a href="#layers">Two layers</a></li>
+        <li><a href="#levels">Levels</a></li>
+        <li><a href="#checklist">Checklist</a></li>
+        <li><a href="#standards">Standards</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ═════════ hero ═════════ -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap">
+    <h1 id="hero-title"><span>A paper reports three wells.</span> <span>A model needs all ninety-six.</span></h1>
+
+    <div class="hero-grid">
+      <p class="hero-lead">AI for science asks what models can do for a laboratory. Science for AI asks the reverse: what does a laboratory have to record for a model to learn from it? This is a working guide to that question.</p>
+
+      <div class="hero-ctrl">
+        <div class="seg" role="radiogroup" aria-label="Which wells to show">
+          <label><input type="radio" name="view" value="published" checked><span>As published</span></label>
+          <label><input type="radio" name="view" value="learnable"><span>As a model needs it</span></label>
+        </div>
+        <p class="tally" id="tally" aria-live="polite"><b>3 of 96 wells</b> reach the paper.</p>
+      </div>
+
+      <div class="hero-record">
+        <div class="record" id="record" aria-live="polite"></div>
+      </div>
+
+      <figure class="hero-screen" aria-labelledby="plate-caption">
+        <div class="screen">
+          <div class="plate" id="plate" data-view="published" role="group" aria-label="A 96-well plate. Arrow keys move between wells."></div>
+          <div class="cbar" aria-hidden="true">
+            <div class="cbar-ramp"></div>
+            <div class="cbar-ticks">
+              <span style="--t:93.5%">3×</span>
+              <span style="--t:70.4%">2×</span>
+              <span style="--t:43.3%">1×</span>
+              <span style="--t:0%">0</span>
+            </div>
+          </div>
+          <div class="screen-foot">
+            <ul class="keys" aria-label="Legend">
+              <li><span class="key-dot is-empty"></span>Not reported</li>
+              <li><span class="key-dot is-ctrl"></span>Control</li>
+              <li><span class="key-dot is-fail"></span>Failed QC, kept and flagged</li>
+            </ul>
+            <p class="caption" id="plate-caption">An illustrative protein activity screen, not real data. Color shows activity relative to the reference protein. Select any well to read its record.</p>
+          </div>
+        </div>
+        <noscript><p class="caption">The plate is interactive and needs JavaScript. The rest of this guide does not.</p></noscript>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ premise ═════════ -->
+<section class="section" id="premise" aria-labelledby="premise-title">
+  <div class="wrap">
+    <h2 id="premise-title">The dataset came first</h2>
+
+    <div class="rows">
+      <div class="row">
+        <p>The best-known success of AI in science rested on a dataset before it rested on a model. The Protein Data Bank opened in 1971 with seven structures. Over the next five decades structural biologists deposited their results in that one open archive, in a shared format, and journals came to require it.<sup><a href="#ref-1" aria-label="Reference 1">1</a></sup> By the time AlphaFold&nbsp;2 was trained, the archive held about 170,000 structures, and the field had been running a blind test since 1994 in which predictions are scored against structures nobody has yet seen.<sup><a href="#ref-2" aria-label="Reference 2">2</a></sup></p>
+        <div class="note" role="note">
+          <p><span class="note-n">1</span> Berman et&nbsp;al., <i>J. Comput. Aided Mol. Des.</i> (2014).</p>
+          <p><span class="note-n">2</span> DeepMind (2020); Jumper et&nbsp;al., <i>Nature</i> (2021).</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <figure class="chart span-2" id="pdb-chart">
+          <div class="chart-head">
+            <p class="chart-title">Structures in the Protein Data Bank</p>
+            <p class="chart-sub">Total entries at the end of each year</p>
+          </div>
+          <div class="chart-plot" tabindex="0" role="group" aria-label="Line chart of Protein Data Bank entries by year, 1976 to 2025. Use the left and right arrow keys to read a year.">
+            <div class="chart-grid" style="bottom:16.67%"><span>50K</span></div>
+            <div class="chart-grid" style="bottom:33.33%"><span>100K</span></div>
+            <div class="chart-grid" style="bottom:50%"><span>150K</span></div>
+            <div class="chart-grid" style="bottom:66.67%"><span>200K</span></div>
+            <div class="chart-grid" style="bottom:83.33%"><span>250K</span></div>
+            <svg class="chart-svg" viewBox="0 0 54 300" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <path class="chart-area" d="M5 299.987 L6 299.964 L7 299.958 L8 299.947 L9 299.931 L10 299.915 L11 299.883 L12 299.847 L13 299.825 L14 299.805 L15 299.787 L16 299.762 L17 299.709 L18 299.635 L19 299.493 L20 299.306 L21 299.114 L22 298.418 L23 297.129 L24 296.188 L25 295.016 L26 293.452 L27 291.397 L28 289.041 L29 286.417 L30 283.607 L31 280.613 L32 276.469 L33 271.320 L34 265.986 L35 259.581 L36 252.447 L37 245.544 L38 238.256 L39 230.514 L40 222.589 L41 213.838 L42 204.500 L43 194.948 L44 185.705 L45 174.900 L46 163.839 L47 152.670 L48 141.191 L49 127.185 L50 114.599 L51 100.309 L52 85.809 L53 70.340 L54 52.726 L54 300 L5 300 Z"/>
+              <path class="chart-line" d="M5 299.987 L6 299.964 L7 299.958 L8 299.947 L9 299.931 L10 299.915 L11 299.883 L12 299.847 L13 299.825 L14 299.805 L15 299.787 L16 299.762 L17 299.709 L18 299.635 L19 299.493 L20 299.306 L21 299.114 L22 298.418 L23 297.129 L24 296.188 L25 295.016 L26 293.452 L27 291.397 L28 289.041 L29 286.417 L30 283.607 L31 280.613 L32 276.469 L33 271.320 L34 265.986 L35 259.581 L36 252.447 L37 245.544 L38 238.256 L39 230.514 L40 222.589 L41 213.838 L42 204.500 L43 194.948 L44 185.705 L45 174.900 L46 163.839 L47 152.670 L48 141.191 L49 127.185 L50 114.599 L51 100.309 L52 85.809 L53 70.340 L54 52.726" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <span class="chart-dot" style="left:0%;bottom:0%"></span>
+            <span class="chart-dot" style="left:42.59%;bottom:0.96%"></span>
+            <span class="chart-dot" style="left:90.74%;bottom:57.60%"></span>
+            <span class="chart-dot" style="left:100%;bottom:82.42%"></span>
+            <p class="chart-callout" style="left:0;bottom:0.5rem"><b>1971</b> Opens with 7 structures</p>
+            <span class="chart-leader" style="left:42.59%;bottom:0.96%;height:calc(15.71% + 2.6rem)"></span>
+            <p class="chart-callout is-left" style="left:42.59%;bottom:calc(16.67% + 0.4rem)"><b>1994</b> First CASP<span class="chart-long"> blind</span> test</p>
+            <p class="chart-callout is-left" style="left:90.74%;bottom:calc(57.60% + 0.6rem)"><b>2020</b> AlphaFold 2 trained<span class="chart-long"> on about 170,000</span></p>
+            <p class="chart-callout is-left is-end" style="left:100%;bottom:calc(82.42% + 0.7rem)"><b>2025</b> 247,274 entries</p>
+            <div class="chart-cross" hidden><span class="chart-cross-dot"></span></div>
+            <p class="chart-tip" hidden aria-live="polite"><b></b><span></span></p>
+          </div>
+          <div class="chart-x" aria-hidden="true">
+            <span style="left:16.67%">1980</span>
+            <span style="left:35.19%">1990</span>
+            <span style="left:53.70%">2000</span>
+            <span style="left:72.22%">2010</span>
+            <span style="left:90.74%">2020</span>
+          </div>
+          <figcaption>
+            <p>The record that structure prediction learned from took fifty years to build. The archive passed 250,000 entries in 2026. Data: RCSB PDB.<sup><a href="#ref-3" aria-label="Reference 3">3</a></sup></p>
+          <details class="chart-data">
+            <summary>Show the numbers</summary>
+            <div class="chart-table-wrap">
+              <table>
+                <thead><tr><th scope="col">Year</th><th scope="col">Entries</th></tr></thead>
+                <tbody>
+                <tr><th scope="row">1976</th><td>13</td></tr>
+                <tr><th scope="row">1977</th><td>36</td></tr>
+                <tr><th scope="row">1978</th><td>42</td></tr>
+                <tr><th scope="row">1979</th><td>53</td></tr>
+                <tr><th scope="row">1980</th><td>69</td></tr>
+                <tr><th scope="row">1981</th><td>85</td></tr>
+                <tr><th scope="row">1982</th><td>117</td></tr>
+                <tr><th scope="row">1983</th><td>153</td></tr>
+                <tr><th scope="row">1984</th><td>175</td></tr>
+                <tr><th scope="row">1985</th><td>195</td></tr>
+                <tr><th scope="row">1986</th><td>213</td></tr>
+                <tr><th scope="row">1987</th><td>238</td></tr>
+                <tr><th scope="row">1988</th><td>291</td></tr>
+                <tr><th scope="row">1989</th><td>365</td></tr>
+                <tr><th scope="row">1990</th><td>507</td></tr>
+                <tr><th scope="row">1991</th><td>694</td></tr>
+                <tr><th scope="row">1992</th><td>886</td></tr>
+                <tr><th scope="row">1993</th><td>1,582</td></tr>
+                <tr><th scope="row">1994</th><td>2,871</td></tr>
+                <tr><th scope="row">1995</th><td>3,812</td></tr>
+                <tr><th scope="row">1996</th><td>4,984</td></tr>
+                <tr><th scope="row">1997</th><td>6,548</td></tr>
+                <tr><th scope="row">1998</th><td>8,603</td></tr>
+                <tr><th scope="row">1999</th><td>10,959</td></tr>
+                <tr><th scope="row">2000</th><td>13,583</td></tr>
+                <tr><th scope="row">2001</th><td>16,393</td></tr>
+                <tr><th scope="row">2002</th><td>19,387</td></tr>
+                <tr><th scope="row">2003</th><td>23,531</td></tr>
+                <tr><th scope="row">2004</th><td>28,680</td></tr>
+                <tr><th scope="row">2005</th><td>34,014</td></tr>
+                <tr><th scope="row">2006</th><td>40,419</td></tr>
+                <tr><th scope="row">2007</th><td>47,553</td></tr>
+                <tr><th scope="row">2008</th><td>54,456</td></tr>
+                <tr><th scope="row">2009</th><td>61,744</td></tr>
+                <tr><th scope="row">2010</th><td>69,486</td></tr>
+                <tr><th scope="row">2011</th><td>77,411</td></tr>
+                <tr><th scope="row">2012</th><td>86,162</td></tr>
+                <tr><th scope="row">2013</th><td>95,500</td></tr>
+                <tr><th scope="row">2014</th><td>105,052</td></tr>
+                <tr><th scope="row">2015</th><td>114,295</td></tr>
+                <tr><th scope="row">2016</th><td>125,100</td></tr>
+                <tr><th scope="row">2017</th><td>136,161</td></tr>
+                <tr><th scope="row">2018</th><td>147,330</td></tr>
+                <tr><th scope="row">2019</th><td>158,809</td></tr>
+                <tr><th scope="row">2020</th><td>172,815</td></tr>
+                <tr><th scope="row">2021</th><td>185,401</td></tr>
+                <tr><th scope="row">2022</th><td>199,691</td></tr>
+                <tr><th scope="row">2023</th><td>214,191</td></tr>
+                <tr><th scope="row">2024</th><td>229,660</td></tr>
+                <tr><th scope="row">2025</th><td>247,274</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="row">
+        <p>Most experimental science has neither the archive nor the test. Results sit in supplementary spreadsheets, instrument exports and notebooks, in formats that change from lab to lab. Experiments that did not work are rarely written down in a form anyone else can use. The reasons an experiment was run at all, which is most of what a scientist knows, are not recorded anywhere.</p>
+      </div>
+
+      <div class="row">
+        <p>Automated laboratories are about to multiply the volume. In July 2026 the US National Science Foundation committed $380&nbsp;million to 20 programmable cloud laboratories, with shared standards for protocols, metadata, data and AI as part of the brief.<sup><a href="#ref-4" aria-label="Reference 4">4</a></sup> One of them, the DREAM Cloud Lab at Northwestern, plans to build and measure more than 300,000 proteins and release up to 30&nbsp;million data points.<sup><a href="#ref-5" aria-label="Reference 5">5</a></sup> Whether records like these are something a model can learn from is decided by what gets captured at the bench, and it is decided now.</p>
+        <div class="note" role="note">
+          <p><span class="note-n">4</span> NSF announcement, 22&nbsp;July 2026.</p>
+          <p><span class="note-n">5</span> Northwestern Engineering, July 2026.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ eight questions ═════════ -->
+<section class="section" id="questions" aria-labelledby="questions-title">
+  <div class="wrap">
+    <h2 id="questions-title">Eight questions a model asks of a dataset</h2>
+
+    <div class="rows">
+      <div class="row">
+        <p class="pull">A reader who is confused can write to the first author. A model cannot.</p>
+      </div>
+      <div class="row">
+        <p>Whatever a model needs has to be in the record already. These eight questions are a way to check a dataset before release. Each one names the part of the record that answers it.</p>
+      </div>
+    </div>
+
+    <div class="questions">
+
+      <article class="q" id="q-identity">
+        <div class="q-key">identity</div>
+        <div class="q-body">
+          <h3>What exactly was measured?</h3>
+          <p>Names drift; identifiers do not. Give the full sequence, structure or composition, not a nickname. Say which numbering convention you are using. Put a unit on every quantity.</p>
+          <p class="capture"><b>Capture</b> sequences or structure identifiers, units, ontology terms, the numbering frame.</p>
+        </div>
+        <div class="note" role="note">
+          <p>A scan of genomics journals found gene names silently converted to dates by spreadsheet software in about a fifth of papers with supplementary Excel gene lists.<sup><a href="#ref-6" aria-label="Reference 6">6</a></sup></p>
+        </div>
+      </article>
+
+      <article class="q" id="q-conditions">
+        <div class="q-key">conditions</div>
+        <div class="q-body">
+          <h3>Under what conditions?</h3>
+          <p>The same sample gives a different number at another temperature, in another buffer, on another instrument. Conditions are what let a model explain variance instead of memorizing it.</p>
+          <p class="capture"><b>Capture</b> protocol version, instrument and settings, reagent lots, temperature, timing, operator or agent.</p>
+        </div>
+        <div class="note" role="note">
+          <p>Automated experimentation helps here. It lets a lab capture metadata at every step of a workflow, which makes the experiment easier to reproduce and the data easier to learn from.<sup><a href="#ref-7" aria-label="Reference 7">7</a></sup></p>
+        </div>
+      </article>
+
+      <article class="q" id="q-uncertainty">
+        <div class="q-key">uncertainty</div>
+        <div class="q-body">
+          <h3>How sure are you?</h3>
+          <p>A value without its spread teaches false confidence. Report replicates one by one, not only their mean. Keep each QC verdict together with the rule it was judged against. State the floor and ceiling of the assay.</p>
+          <p class="capture"><b>Capture</b> replicate-level values, QC pass or fail with the criterion, detection limits, calibration.</p>
+        </div>
+      </article>
+
+      <article class="q" id="q-negatives">
+        <div class="q-key">negatives</div>
+        <div class="q-body">
+          <h3>What did not work?</h3>
+          <p>The literature is a record of successes, so a model trained on it has never seen failure. A dataset that keeps only the hits teaches a model where the peaks are and nothing about the ground between them.</p>
+          <p class="capture"><b>Capture</b> every sample that was run, including nulls, inactive variants and failed runs, flagged and not deleted.</p>
+        </div>
+        <div class="note" role="note">
+          <p>One group transcribed the failed syntheses from its own notebooks and trained on them with the successes. The model’s recommended reactions worked 89% of the time; the chemists’ own judgment, 78%.<sup><a href="#ref-8" aria-label="Reference 8">8</a></sup></p>
+        </div>
+      </article>
+
+      <article class="q" id="q-comparability">
+        <div class="q-key">comparability</div>
+        <div class="q-body">
+          <h3>Can this be compared with anything else?</h3>
+          <p>Data from two plates, two weeks or two labs can be merged only if something ties them together. Shared controls and a reference sample carried through every run let a model learn the science and not the batch.</p>
+          <p class="capture"><b>Capture</b> controls on every plate, anchor samples across rounds, calibration to standard units, batch identifiers.</p>
+        </div>
+      </article>
+
+      <article class="q" id="q-splits">
+        <div class="q-key">splits</div>
+        <div class="q-body">
+          <h3>Is the test set really unseen?</h3>
+          <p>Scientific data is full of near-duplicates: homologous proteins, one compound in two assays, a time series cut at random. Ship the split with the data, and say what it is meant to hold out.</p>
+          <p class="capture"><b>Capture</b> train and test assignment, the grouping rule (by family, scaffold, date or lab), known overlaps with public sets.</p>
+        </div>
+        <div class="note" role="note">
+          <p>A survey of machine-learning-based science found data leakage affecting at least 294 papers across 17 fields.<sup><a href="#ref-9" aria-label="Reference 9">9</a></sup></p>
+        </div>
+      </article>
+
+      <article class="q" id="q-rights">
+        <div class="q-key">rights</div>
+        <div class="q-body">
+          <h3>Am I allowed to learn from it?</h3>
+          <p>A dataset with no license, or with terms that are silent on model training, is not ready however clean it is. Neither is one whose consent or embargo status nobody can state.</p>
+          <p class="capture"><b>Capture</b> license, consent and embargo status, a persistent identifier, how to cite.</p>
+        </div>
+        <div class="note" role="note">
+          <p>A clear, accessible usage license is one of the FAIR principles.<sup><a href="#ref-10" aria-label="Reference 10">10</a></sup></p>
+        </div>
+      </article>
+
+      <article class="q" id="q-rationale">
+        <div class="q-key">rationale</div>
+        <div class="q-body">
+          <h3>Why was this experiment run?</h3>
+          <p>Every design choice encodes knowledge: what was expected, what it rested on, what was ruled out. None of it survives in a results table. It is the part of the record nobody keeps, and the subject of the next section.</p>
+          <p class="capture"><b>Capture</b> the question, the choice made, the alternatives rejected, a prediction written down before the result.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ two layers ═════════ -->
+<section class="section" id="layers" aria-labelledby="layers-title">
+  <div class="wrap">
+    <h2 id="layers-title">What happened, and why it was done</h2>
+
+    <div class="rows">
+      <div class="row">
+        <p>Laboratory software answers one question well: what happened. Plate, well, sample, condition, value. It does not hold the answer to the question a scientist would ask first: why does this well exist?</p>
+      </div>
+      <div class="row">
+        <p>The first layer can be captured by instruments, automatically. The second has to be written down by whoever made the decision, a scientist or an agent, before the result is known. Kept together, they turn an archive into something a model can be scored against: a prediction, an outcome and a verdict for every choice.</p>
+      </div>
+    </div>
+
+    <figure class="layers">
+      <div class="layers-grid">
+        <div class="layer">
+          <h3 class="layer-title">What happened</h3>
+          <p class="layer-sub">Captured by instruments.</p>
+          <dl class="fields">
+            <dt>plate</dt><dd>P-0412</dd>
+            <dt>well</dt><dd>E5</dd>
+            <dt>sample</dt><dd>V-029</dd>
+            <dt>substrate</dt><dd>S2, 50 µM</dd>
+            <dt>temperature</dt><dd>30 °C</dd>
+            <dt>read</dt><dd>fluorescence 485/528 nm, 4 h</dd>
+            <dt>activity</dt><dd>1.08 × reference</dd>
+            <dt>melting_temp</dt><dd>+0.4 °C vs reference</dd>
+            <dt>replicates</dt><dd>3, CV 6%</dd>
+            <dt>protocol</dt><dd>cellfree-expr v2.1</dd>
+            <dt>qc</dt><dd>pass</dd>
+          </dl>
+          <p class="layer-foot">Eleven fields, and every one describes the well. None of them explains it.</p>
+        </div>
+        <div class="layer">
+          <h3 class="layer-title">Why it was done</h3>
+          <p class="layer-sub">Written down by the person or agent who decided.</p>
+          <div class="steps">
+            <p class="phase">Before the plate ran</p>
+            <dl>
+            <div class="step"><dt>question</dt><dd>Does filling the cavity behind the active site make the enzyme more stable without costing activity?</dd></div>
+            <div class="step"><dt>decision</dt><dd>Test V-029, a leucine in place of an alanine, with V-030, a valine, as the smaller step.</dd></div>
+            <div class="step"><dt>ruled_out</dt><dd>Phenylalanine. Likely to clash with the neighboring helix.</dd></div>
+            <div class="step"><dt>rests_on</dt><dd>The cavity in the reference structure is also there in solution.</dd></div>
+            <div class="step"><dt>prediction</dt><dd>Melting temperature up by at least 2 °C, activity within 20% of reference. Confidence 60%.</dd></div>
+            </dl>
+            <p class="phase">After</p>
+            <dl>
+            <div class="step"><dt>outcome</dt><dd>+0.4 °C. Activity 1.08 ×.</dd></div>
+            <div class="step"><dt>verdict</dt><dd>Refuted.</dd></div>
+            <div class="step"><dt>changed</dt><dd>Cavity filling at this site is dropped from the next round. The assumption about the cavity is queued for a direct test.</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+      <figcaption>One well, two layers. This is well E5 from the plate at the top of the page; the example is invented for illustration. Most lab systems keep the left column. The right column is usually in someone’s head.</figcaption>
+    </figure>
+
+    <div class="rows">
+      <div class="row">
+        <p>Our working hypothesis is that the second layer is what separates a model that predicts assay results from one that can plan an experiment. It is a hypothesis, not a finding. The nearest evidence comes from surgery, where one group stopped labeling more video frames and instead harvested the reasoning in surgeons’ narrated teaching videos; models trained on it outperformed larger general-purpose models on questions about intent and rationale.<sup><a href="#ref-11" aria-label="Reference 11">11</a></sup></p>
+        <div class="note" role="note">
+          <p><span class="note-n">11</span> Perez, Rau et&nbsp;al., arXiv (2026).</p>
+        </div>
+      </div>
+      <div class="row">
+        <p>It also pays for itself before any model is trained. A lab that writes its predictions down first can count how often it was right, see which assumptions a whole round of designs was resting on, and tell a refuted idea from an experiment that never tested it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ levels ═════════ -->
+<section class="section" id="levels" aria-labelledby="levels-title">
+  <div class="wrap">
+    <h2 id="levels-title">Five levels of readiness</h2>
+
+    <div class="rows">
+      <div class="row">
+        <p>Guidance on data usually stops once a dataset can be found and is well described. That is necessary, and a model needs more. This ladder is our working synthesis. The lower rungs map onto standards that already exist; the top rung is where we think the open problem is.</p>
+      </div>
+    </div>
+
+    <ol class="levels">
+      <li class="level">
+        <div class="level-n"><span class="level-chip" style="--chip:#440154"></span>Level 0</div>
+        <div class="level-body">
+          <h3>Stored</h3>
+          <p>Files exist. What they mean lives in filenames and in someone’s memory.</p>
+        </div>
+        <p class="level-for"><b>Usable by</b> the person who made it.</p>
+      </li>
+      <li class="level">
+        <div class="level-n"><span class="level-chip" style="--chip:#3b528b"></span>Level 1</div>
+        <div class="level-body">
+          <h3>Shared</h3>
+          <p>Persistent identifiers, standard formats, descriptive metadata and a license: the FAIR principles.<sup><a href="#ref-10" aria-label="Reference 10">10</a></sup></p>
+        </div>
+        <p class="level-for"><b>Usable by</b> another scientist who goes looking.</p>
+      </li>
+      <li class="level">
+        <div class="level-n"><span class="level-chip" style="--chip:#21918c"></span>Level 2</div>
+        <div class="level-body">
+          <h3>Loadable</h3>
+          <p>A datasheet explains how the data was collected and what it should not be used for.<sup><a href="#ref-12" aria-label="Reference 12">12</a></sup> Machine-readable metadata such as Croissant lets ML tools load it without hand-written parsing.<sup><a href="#ref-13" aria-label="Reference 13">13</a></sup></p>
+        </div>
+        <p class="level-for"><b>Usable by</b> a training pipeline.</p>
+      </li>
+      <li class="level">
+        <div class="level-n"><span class="level-chip" style="--chip:#5ec962"></span>Level 3</div>
+        <div class="level-body">
+          <h3>Learnable</h3>
+          <p>Conditions, uncertainty, negatives, comparability, splits and rights are all in the release, in the spirit of criteria such as NIH Bridge2AI’s seven dimensions of AI-readiness.<sup><a href="#ref-14" aria-label="Reference 14">14</a></sup></p>
+        </div>
+        <p class="level-for"><b>Usable by</b> a model that predicts outcomes.</p>
+      </li>
+      <li class="level">
+        <div class="level-n"><span class="level-chip" style="--chip:#fde725"></span>Level 4</div>
+        <div class="level-body">
+          <h3>Reasoned <span class="level-open">Open problem</span></h3>
+          <p>The record also carries the decisions: why each experiment was run, what was predicted, and how the result changed the next one.</p>
+        </div>
+        <p class="level-for"><b>Usable by</b> a model that plans experiments.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ═════════ checklist ═════════ -->
+<section class="section is-tool" id="checklist" aria-labelledby="checklist-title">
+  <div class="wrap">
+    <h2 id="checklist-title">Before you release a dataset</h2>
+
+    <div class="rows">
+      <div class="row">
+        <p class="span-2" style="max-width:40rem">Sixteen checks, two for each question. Mark the ones your dataset already meets. Your marks stay in this browser; nothing is sent anywhere.</p>
+      </div>
+    </div>
+
+    <div class="check-bar">
+      <div class="progress" id="progress" aria-live="polite">
+        <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progress-fill"></div></div>
+        <span id="progress-text">0 of 16 checked</span>
+      </div>
+      <button class="btn" type="button" id="copy-md">Copy as Markdown</button>
+      <button class="btn is-quiet" type="button" id="reset-checks">Clear all</button>
+    </div>
+
+    <div class="checks" id="checks">
+      <section class="check-group" data-key="identity">
+        <h3>identity</h3>
+        <ul>
+          <li><label class="check"><input type="checkbox"><span>Every sample has a full sequence, structure or composition, not only a name</span></label></li>
+          <li><label class="check"><input type="checkbox"><span>Every quantity has a unit, and every identifier says which convention it follows</span></label></li>
+        </ul>
+      </section>
+      <section class="check-group" data-key="conditions">
+        <h3>conditions</h3>
+        <ul>
+          <li><label class="check"><input type="checkbox"><span>Protocol version, instrument and settings are attached to each run</span></label></li>
+          <li><label class="check"><input type="checkbox"><span>Reagent lots, temperature and timing are recorded, not assumed</span></label></li>
+        </ul>
+      </section>
+      <section class="check-group" data-key="uncertainty">
+        <h3>uncertainty</h3>
+        <ul>
+          <li><label class="check"><input type="checkbox"><span>Replicates are reported individually</span></label></li>
+          <li><label class="check"><input type="checkbox"><span>QC verdicts are kept with the rule they were judged against</span></label></li>
+        </ul>
+      </section>
+      <section class="check-group" data-key="negatives">
+        <h3>negatives</h3>
+        <ul>
+          <li><label class="check"><input type="checkbox"><span>Every sample that was run is in the release, including nulls and failures</span></label></li>
+          <li><label class="check"><input type="checkbox"><span>Failed runs are flagged with a reason, not removed</span></label></li>
+        </ul>
+      </section>
+      <section class="check-group" data-key="comparability">
+        <h3>comparability</h3>
+        <ul>
+          <li><label class="check"><input type="checkbox"><span>Each plate or batch carries controls and a reference sample</span></label></li>
+          <li><label class="check"><input type="checkbox"><span>Values can be converted to standard or absolute units</span></label></li>
+        </ul>
+      </section>
+      <section class="check-group" data-key="splits">
+        <h3>splits</h3>
+        <ul>
+          <li><label class="check"><input type="checkbox"><span>A train and test split ships with the data, with its grouping rule</span></label></li>
+          <li><label class="check"><input type="checkbox"><span>Known overlaps with public datasets are stated</span></label></li>
+        </ul>
+      </section>
+      <section class="check-group" data-key="rights">
+        <h3>rights</h3>
+        <ul>
+          <li><label class="check"><input type="checkbox"><span>A license that covers model training is attached</span></label></li>
+          <li><label class="check"><input type="checkbox"><span>The dataset has a persistent identifier and a citation</span></label></li>
+        </ul>
+      </section>
+      <section class="check-group" data-key="rationale">
+        <h3>rationale</h3>
+        <ul>
+          <li><label class="check"><input type="checkbox"><span>Each design carries the question it was meant to answer</span></label></li>
+          <li><label class="check"><input type="checkbox"><span>Predictions were written down before the results came back</span></label></li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ standards ═════════ -->
+<section class="section" id="standards" aria-labelledby="standards-title">
+  <div class="wrap">
+    <h2 id="standards-title">Standards to build on</h2>
+
+    <div class="rows">
+      <div class="row">
+        <p>None of this starts from zero. These are the frameworks and community resources we lean on, and where each one helps.</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="standards">
+        <caption>General frameworks</caption>
+        <thead>
+          <tr><th scope="col">Framework</th><th scope="col">What it gives you</th><th scope="col">Reference</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><a href="https://doi.org/10.1038/sdata.2016.18">FAIR Guiding Principles</a></th>
+            <td>Findable, accessible, interoperable, reusable. The baseline for any shared dataset.</td>
+            <td>2016 <sup><a href="#ref-10" aria-label="Reference 10">10</a></sup></td>
+          </tr>
+          <tr>
+            <th scope="row"><a href="https://doi.org/10.1145/3458723">Datasheets for Datasets</a></th>
+            <td>A structured account of why and how a dataset was made, and where it should not be used.</td>
+            <td>2021 <sup><a href="#ref-12" aria-label="Reference 12">12</a></sup></td>
+          </tr>
+          <tr>
+            <th scope="row"><a href="https://arxiv.org/abs/2403.19546">Croissant</a></th>
+            <td>A metadata format from MLCommons that lets ML frameworks load a dataset directly.</td>
+            <td>2024 <sup><a href="#ref-13" aria-label="Reference 13">13</a></sup></td>
+          </tr>
+          <tr>
+            <th scope="row"><a href="https://doi.org/10.1101/2024.10.23.619844">Bridge2AI AI-readiness criteria</a></th>
+            <td>Seven dimensions for biomedical data: FAIRness, provenance, characterization, pre-model explainability, ethics, sustainability, computability.</td>
+            <td>2024 <sup><a href="#ref-14" aria-label="Reference 14">14</a></sup></td>
+          </tr>
+          <tr>
+            <th scope="row"><a href="https://arxiv.org/abs/2507.23018">Data readiness for scientific AI at scale</a></th>
+            <td>Readiness levels and processing stages for datasets large enough to train foundation models.</td>
+            <td>2025 <sup><a href="#ref-15" aria-label="Reference 15">15</a></sup></td>
+          </tr>
+          <tr>
+            <th scope="row"><a href="https://doi.org/10.1002/aaai.70054">An actionable framework for AI-ready data</a></th>
+            <td>Concrete steps for data publishers and repositories, from the Open Data Institute.</td>
+            <td>2026 <sup><a href="#ref-16" aria-label="Reference 16">16</a></sup></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="standards">
+        <caption>Community resources that show what good looks like</caption>
+        <thead>
+          <tr><th scope="col">Resource</th><th scope="col">Why it works</th><th scope="col">Reference</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><a href="https://www.wwpdb.org/">Protein Data Bank</a></th>
+            <td>One open archive and one format for macromolecular structures, with deposition required by journals.</td>
+            <td>1971 <sup><a href="#ref-1" aria-label="Reference 1">1</a></sup></td>
+          </tr>
+          <tr>
+            <th scope="row"><a href="https://doi.org/10.1021/jacs.1c09820">Open Reaction Database</a></th>
+            <td>An open schema for chemical reactions that keeps conditions and outcomes together, from benchtop work to automated screens.</td>
+            <td>2021 <sup><a href="#ref-17" aria-label="Reference 17">17</a></sup></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ about ═════════ -->
+<section class="section" id="about" aria-labelledby="about-title">
+  <div class="wrap">
+    <h2 id="about-title">Who is behind this</h2>
+
+    <div class="rows">
+      <div class="row">
+        <p>Science4AI is maintained by <a href="https://michaelyeah7.github.io/">Guo Ye</a>, a data scientist at the DREAM Cloud Lab in Northwestern University’s Center for Synthetic Biology, one of the 20 nodes in the NSF Programmable Cloud Laboratories Test Bed. It grows out of the day-to-day work of making an automated protein-engineering lab’s output usable for training AI.</p>
+      </div>
+      <div class="row">
+        <p>This is a working document and it will change. If something here is wrong, missing or out of date, <a href="https://github.com/michaelyeah7/science4ai/issues">open an issue</a> or propose an edit on <a href="https://github.com/michaelyeah7/science4ai">GitHub</a>. A related project, <a href="https://michaelyeah7.github.io/autonomous-lab-bench/">Autonomous Lab Bench</a>, proposes a cross-laboratory benchmark for scientific agents.</p>
+      </div>
+    </div>
+
+    <div class="partners">
+      <h3>Affiliations and collaborators</h3>
+      <ul class="partner-list">
+        <li><a href="https://www.northwestern.edu/"><span class="partner-name">Northwestern University</span></a></li>
+        <li><a href="https://syntheticbiology.northwestern.edu/"><span class="partner-name">Center for Synthetic Biology</span></a></li>
+        <li><a href="https://syntheticbiology.northwestern.edu/research/biofoundry/dream/"><span class="partner-name">DREAM Cloud Lab</span></a></li>
+        <li><a href="https://www.stanford.edu/"><span class="partner-name">Stanford University</span></a></li>
+      </ul>
+      <p class="caption">Names show where the maintainer and collaborating researchers work. They do not imply that any institution endorses this site. The views here are the maintainer’s own and do not represent NSF, Northwestern University or any other institution.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ references ═════════ -->
+<section class="section" id="references" aria-labelledby="references-title">
+  <div class="wrap">
+    <h2 id="references-title">References</h2>
+    <ol class="refs">
+      <li id="ref-1">Berman, H. M., Kleywegt, G. J., Nakamura, H. &amp; Markley, J. L. The Protein Data Bank archive as an open data resource. <cite>J. Comput. Aided Mol. Des.</cite> 28, 1009–1014 (2014). <a href="https://doi.org/10.1007/s10822-014-9770-y">doi:10.1007/s10822-014-9770-y</a></li>
+      <li id="ref-2">DeepMind. <a href="https://deepmind.google/discover/blog/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology/">AlphaFold: a solution to a 50-year-old grand challenge in biology</a> (30 November 2020). Jumper, J. et al. Highly accurate protein structure prediction with AlphaFold. <cite>Nature</cite> 596, 583–589 (2021). <a href="https://doi.org/10.1038/s41586-021-03819-2">doi:10.1038/s41586-021-03819-2</a></li>
+      <li id="ref-3">RCSB Protein Data Bank. <a href="https://www.rcsb.org/stats/growth/growth-released-structures">PDB statistics: overall growth of released structures per year</a>. Accessed November 2026.</li>
+      <li id="ref-4">U.S. National Science Foundation. <a href="https://www.nsf.gov/tip/updates/nsf-announces-400m-investment-new-national-network-ai">NSF announces $400M investment in new national network of AI-programmable cloud laboratories</a> (22 July 2026). See also solicitation <a href="https://www.nsf.gov/funding/opportunities/pcl-test-bed-test-bed-toward-network-programmable-cloud-laboratories/nsf25-541/solicitation">NSF 25-541</a>.</li>
+      <li id="ref-5">Northwestern Engineering. <a href="https://www.mccormick.northwestern.edu/news/articles/2026/07/ai-directed-protein-engineering-cloud-lab-receives-20-million-from-nsf/">AI-directed protein-engineering cloud lab receives $20 million from NSF</a> (July 2026).</li>
+      <li id="ref-6">Ziemann, M., Eren, Y. &amp; El-Osta, A. Gene name errors are widespread in the scientific literature. <cite>Genome Biol.</cite> 17, 177 (2016). <a href="https://doi.org/10.1186/s13059-016-1044-7">doi:10.1186/s13059-016-1044-7</a></li>
+      <li id="ref-7">Astera Institute. <a href="https://astera.org/astera-partnering-with-the-national-science-foundation/">Astera partnering with the National Science Foundation</a> (2026).</li>
+      <li id="ref-8">Raccuglia, P. et al. Machine-learning-assisted materials discovery using failed experiments. <cite>Nature</cite> 533, 73–76 (2016). <a href="https://doi.org/10.1038/nature17439">doi:10.1038/nature17439</a></li>
+      <li id="ref-9">Kapoor, S. &amp; Narayanan, A. Leakage and the reproducibility crisis in machine-learning-based science. <cite>Patterns</cite> 4, 100804 (2023). <a href="https://doi.org/10.1016/j.patter.2023.100804">doi:10.1016/j.patter.2023.100804</a></li>
+      <li id="ref-10">Wilkinson, M. D. et al. The FAIR Guiding Principles for scientific data management and stewardship. <cite>Sci. Data</cite> 3, 160018 (2016). <a href="https://doi.org/10.1038/sdata.2016.18">doi:10.1038/sdata.2016.18</a></li>
+      <li id="ref-11">Perez, A., Rau, A. et al. SUREON: a benchmark and vision-language-model for surgical reasoning. <a href="https://arxiv.org/abs/2603.06570">arXiv:2603.06570</a> (2026).</li>
+      <li id="ref-12">Gebru, T. et al. Datasheets for datasets. <cite>Commun. ACM</cite> 64(12), 86–92 (2021). <a href="https://doi.org/10.1145/3458723">doi:10.1145/3458723</a></li>
+      <li id="ref-13">Akhtar, M. et al. Croissant: a metadata format for ML-ready datasets. <a href="https://arxiv.org/abs/2403.19546">arXiv:2403.19546</a> (2024).</li>
+      <li id="ref-14">Clark, T. et al. AI-readiness for biomedical data: Bridge2AI recommendations. <cite>bioRxiv</cite> (2024). <a href="https://doi.org/10.1101/2024.10.23.619844">doi:10.1101/2024.10.23.619844</a></li>
+      <li id="ref-15">Brewer, W. et al. Data readiness for scientific AI at scale. <a href="https://arxiv.org/abs/2507.23018">arXiv:2507.23018</a> (2025).</li>
+      <li id="ref-16">Majithia, N., Carey-Wilson, T., Simperl, E. &amp; Shadbolt, N. An actionable framework for AI-ready data. <cite>AI Magazine</cite> 47, e70054 (2026). <a href="https://doi.org/10.1002/aaai.70054">doi:10.1002/aaai.70054</a></li>
+      <li id="ref-17">Kearnes, S. M. et al. The Open Reaction Database. <cite>J. Am. Chem. Soc.</cite> 143, 18820–18826 (2021). <a href="https://doi.org/10.1021/jacs.1c09820">doi:10.1021/jacs.1c09820</a></li>
+    </ol>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#top">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="3.2" cy="3.2" r="2.6" fill="#440154"/><circle cx="10" cy="3.2" r="2.6" fill="#3b528b"/><circle cx="16.8" cy="3.2" r="2.6" fill="#21918c"/><circle cx="3.2" cy="10" r="2.6" fill="#3b528b"/><circle cx="10" cy="10" r="2.6" fill="#21918c"/><circle cx="16.8" cy="10" r="2.6" fill="#5ec962"/><circle cx="3.2" cy="16.8" r="2.6" fill="#21918c"/><circle cx="10" cy="16.8" r="2.6" fill="#5ec962"/><circle cx="16.8" cy="16.8" r="2.6" fill="#fde725"/></svg>
+        Science4AI
+      </a>
+      <p>A working guide to experimental data that AI can learn from. Last updated November 2026.</p>
+    </div>
+    <nav class="foot-links" aria-label="Elsewhere">
+      <a href="https://github.com/michaelyeah7/science4ai">Source on GitHub</a>
+      <a href="https://michaelyeah7.github.io/">Guo Ye</a>
+      <a href="https://michaelyeah7.github.io/autonomous-lab-bench/">Autonomous Lab Bench</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>
