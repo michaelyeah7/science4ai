@@ -1,4 +1,5 @@
-/* Science4AI — interactive plate, growth figure, checklist and navigation.
+/* Science4AI — interactive plate, growth figure, checklist, navigation
+   and the few moments of motion.
    No dependencies. Everything here is progressive enhancement:
    the guide reads fine without it. */
 (() => {
@@ -18,6 +19,11 @@
     const c = VIRIDIS[i].map((a, k) => Math.round(a + (VIRIDIS[i + 1][k] - a) * f));
     return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
   }
+
+  /* The plate sits on a dark stage, where the first fifth of viridis would
+     disappear. Wells are drawn from the rest of the ramp, so an inactive
+     well is dim but still plainly there. The color bar uses the same range. */
+  const onStage = (t) => viridis(0.2 + 0.8 * t);
 
   /* Activity is shown on a gently compressed scale so that the bulk of the
      plate (0–1.2 × reference) is not all one color. The color-bar ticks in
@@ -132,13 +138,16 @@
     /* column numbers, then one row at a time: letter + twelve wells */
     plate.append(el("span", { class: "plate-label", "aria-hidden": "true" }));
     for (let c = 1; c <= COLS; c++) plate.append(el("span", { class: "plate-label", "aria-hidden": "true", text: String(c) }));
-    ROWS.forEach((letter, r) => {
+    ROWS.forEach((letter) => {
       plate.append(el("span", { class: "plate-label", "aria-hidden": "true", text: letter }));
       for (let c = 1; c <= COLS; c++) {
         const w = byId.get(letter + c);
         const b = el("button", { class: "well", type: "button", "data-id": w.id, "data-kind": w.kind, "aria-pressed": "false", tabindex: "-1" });
         if (w.reported) b.setAttribute("data-reported", "");
-        b.style.setProperty("--c", viridis(scale(w.value)));
+        const t = scale(w.value);
+        b.style.setProperty("--c", onStage(t));
+        /* brighter wells throw more light */
+        b.style.setProperty("--g", Math.pow(t, 1.5).toFixed(3));
         b.style.setProperty("--i", w.i.toFixed(1));
         buttons.set(w.id, b);
         plate.append(b);
@@ -214,14 +223,14 @@
     function renderTally() {
       if (!tally) return;
       if (view === "published") {
-        tally.replaceChildren(el("b", { text: "3 of 96 wells" }), " reach the paper.");
+        tally.replaceChildren(el("span", {}, [el("b", { text: "3 of 96 wells" }), " reach the paper."]));
         return;
       }
       const count = (k) => wells.filter((w) => w.kind === k).length;
-      tally.replaceChildren(
+      tally.replaceChildren(el("span", {}, [
         el("b", { text: "96 of 96 wells" }),
-        ` are kept: ${count("hit")} hits, ${count("improved")} improved, ${count("neutral")} near reference, ${count("dead")} inactive, ${count("fail")} failed QC and ${count("blank") + count("ref")} controls.`
-      );
+        ` are kept: ${count("hit")} hits, ${count("improved")} improved, ${count("neutral")} near reference, ${count("dead")} inactive, ${count("fail")} failed QC and ${count("blank") + count("ref")} controls.`,
+      ]));
     }
 
     function select(id, focus) {
@@ -269,8 +278,9 @@
     });
 
     /* The one orchestrated moment: the page opens on what a paper keeps,
-       then the rest of the plate fills in. It runs once, and never if the
-       visitor has already used the control or prefers reduced motion. */
+       three lit wells in the dark, then the rest of the plate fills in.
+       It runs once, and never if the visitor has already used the control
+       or prefers reduced motion. */
     let autoTimer = null;
     radios.forEach((r) => r.addEventListener("change", () => {
       if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
@@ -281,11 +291,97 @@
     select("C7", false);
 
     if (!reduceMotion) {
-      autoTimer = setTimeout(() => { autoTimer = null; setView("learnable"); }, 1700);
+      autoTimer = setTimeout(() => { autoTimer = null; setView("learnable"); }, 1900);
       const cancel = () => { if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; } };
       plate.addEventListener("pointerdown", cancel, { once: true });
       plate.addEventListener("keydown", cancel, { once: true });
     }
+  }
+
+  /* ───────── hero: unreported wells flickering in the lattice ───────── */
+
+  function initLattice() {
+    const bg = document.getElementById("hero-bg");
+    if (!bg || reduceMotion) return;
+    const rand = mulberry32(96);
+    const colors = ["#2a788e", "#22a884", "#44bf70", "#7ad151", "#bddf26", "#fde725"];
+    const wide = window.innerWidth >= 960;
+    const count = wide ? 18 : 9;
+    const span = Math.floor(window.innerWidth / 2 / 28);
+    const rows = Math.max(6, Math.floor(bg.clientHeight / 28 * 0.7));
+    for (let n = 0; n < count; n++) {
+      /* keep to the right-hand side, where the lattice is visible */
+      const k = wide ? Math.floor(rand() * (span + 3)) - 3 : Math.floor(rand() * (2 * span)) - span;
+      const j = 1 + Math.floor(rand() * rows);
+      const dot = el("i");
+      dot.style.left = `calc(50% + ${(k * 1.75).toFixed(2)}rem - 1.5px)`;
+      dot.style.top = `calc(${(0.875 + j * 1.75).toFixed(3)}rem - 1.5px)`;
+      dot.style.setProperty("--c", colors[Math.floor(rand() * colors.length)]);
+      dot.style.setProperty("--d", (5 + rand() * 5).toFixed(1) + "s");
+      dot.style.setProperty("--w", (rand() * 9).toFixed(1) + "s");
+      bg.append(dot);
+    }
+  }
+
+  /* ───────── hero: the eight questions, asked one after another ───────── */
+
+  function initAsk() {
+    const out = document.getElementById("ask-q");
+    const hero = document.querySelector(".hero");
+    if (!out || !hero || reduceMotion) return;
+    const questions = Array.from(document.querySelectorAll(".q h3")).map((h) => h.textContent.trim());
+    if (questions.length < 2) return;
+
+    let index = Math.max(0, questions.indexOf(out.textContent.trim()));
+    let running = false;
+    let inView = true;
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const idle = () => !inView || document.hidden;
+
+    async function run() {
+      if (running) return;
+      running = true;
+      while (!idle()) {
+        await wait(2800);
+        if (idle()) break;
+        let text = questions[index];
+        for (let n = text.length - 1; n >= 0; n--) { out.textContent = text.slice(0, n); await wait(13); }
+        index = (index + 1) % questions.length;
+        text = questions[index];
+        await wait(260);
+        for (let n = 1; n <= text.length; n++) { out.textContent = text.slice(0, n); await wait(32); }
+      }
+      running = false;
+    }
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((entries) => {
+        inView = entries[0].isIntersecting;
+        if (inView) run();
+      }).observe(hero);
+    } else {
+      run();
+    }
+    document.addEventListener("visibilitychange", () => { if (!idle()) run(); });
+  }
+
+  /* ───────── figures that draw themselves in, once ───────── */
+
+  function initReveal() {
+    const items = Array.from(document.querySelectorAll("[data-reveal]"));
+    if (!items.length) return;
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      items.forEach((item) => item.classList.add("is-in"));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in");
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+    items.forEach((item) => observer.observe(item));
   }
 
   /* ───────── PDB growth figure: crosshair and readout ───────── */
@@ -369,7 +465,7 @@
     };
     const update = () => {
       const done = boxes.filter((b) => b.checked).length;
-      if (fill) fill.style.width = (done / boxes.length) * 100 + "%";
+      if (fill) fill.style.setProperty("--p", (done / boxes.length) * 100 + "%");
       if (text) text.textContent = `${done} of ${boxes.length} checked`;
     };
 
@@ -428,14 +524,18 @@
     window.addEventListener("scroll", onScroll, { passive: true });
 
     if (toggle) {
-      const setOpen = (open) => { nav.classList.toggle("is-open", open); toggle.setAttribute("aria-expanded", String(open)); };
+      const setOpen = (open) => {
+        nav.classList.toggle("is-open", open);
+        head.classList.toggle("is-open", open);
+        toggle.setAttribute("aria-expanded", String(open));
+      };
       toggle.addEventListener("click", () => setOpen(!nav.classList.contains("is-open")));
       nav.addEventListener("click", (e) => { if (e.target.closest("a")) setOpen(false); });
       document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
     }
 
     const links = new Map();
-    nav.querySelectorAll('a[href^="#"]').forEach((a) => links.set(a.getAttribute("href").slice(1), a));
+    nav.querySelectorAll('li a[href^="#"]').forEach((a) => links.set(a.getAttribute("href").slice(1), a));
     const sections = Array.from(links.keys()).map((id) => document.getElementById(id)).filter(Boolean);
     if (!("IntersectionObserver" in window) || !sections.length) return;
 
@@ -448,7 +548,7 @@
     sections.forEach((s) => observer.observe(s));
   }
 
-  const start = () => { initPlate(); initChart(); initChecklist(); initNav(); };
+  const start = () => { initPlate(); initLattice(); initAsk(); initReveal(); initChart(); initChecklist(); initNav(); };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();
 })();
