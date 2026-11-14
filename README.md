@@ -11,9 +11,9 @@ It is a static site. There is no build step and nothing to install.
 index.html            the whole guide (all copy lives here)
 404.html              not-found page
 assets/css/site.css   styles
-assets/js/site.js     the interactive plate, the checklist, navigation
+assets/js/site.js     the interactive plate, the checklist, navigation, motion
 assets/fonts/         IBM Plex Serif, Sans and Mono (SIL Open Font License, see OFL.txt)
-assets/img/           favicon, social preview image, collaborator logos
+assets/img/           favicon, social preview image, affiliation logos
 CNAME                 custom domain for GitHub Pages
 .nojekyll             tells GitHub Pages to serve the files as they are
 robots.txt, sitemap.xml
@@ -37,14 +37,22 @@ Then open <http://localhost:8000/>. Opening `index.html` straight from disk also
   rest come from a seeded generator, so the plate is the same on every visit.
 - **Checklist.** The sixteen items are plain HTML in `index.html` under
   `<section id="checklist">`. Marks are kept in the visitor's own browser.
-- **Collaborator logos.** Put the official logo file in `assets/img/logos/` and replace
-  the text name in the `partner-list` in `index.html`:
+- **Affiliation logos.** The row under the hero (`affil-list` in `index.html`) shows
+  institution names as text. To show a logo instead, put the official file in
+  `assets/img/logos/` and replace the name inside its link:
 
   ```html
-  <li><a href="https://example.edu/"><img src="assets/img/logos/example.svg" alt="Example University" width="180" height="44"></a></li>
+  <li><a href="https://example.edu/"><img src="assets/img/logos/example.svg" alt="Example University" width="160" height="32"></a></li>
   ```
 
-  Use each institution's own logo file, unaltered, and check its brand guidelines first.
+  The row sits on a dark background, so use each institution's own light or reversed
+  logo file, unaltered, and check its brand guidelines first.
+- **Styles and scripts.** After changing `assets/css/site.css` or `assets/js/site.js`,
+  raise the `?v=` number on their two links in `index.html`. Returning visitors then get
+  the new files at once instead of a cached copy.
+- **Look.** Colors, type sizes and spacing are the variables at the top of
+  `assets/css/site.css`. Dark and light sections share the same components: a section is
+  dark with `class="section band-dark"` and light with `band-light` or `band-wash`.
 
 ## Hosting
 
