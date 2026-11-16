@@ -302,7 +302,7 @@
 
   function initLattice() {
     const bg = document.getElementById("hero-bg");
-    if (!bg || reduceMotion) return;
+    if (!bg || reduceMotion || bg.clientHeight < 120) return;
     const rand = mulberry32(96);
     const colors = ["#2a788e", "#22a884", "#44bf70", "#7ad151", "#bddf26", "#fde725"];
     const wide = window.innerWidth >= 960;
@@ -325,11 +325,24 @@
 
   /* ───────── hero: the eight questions, asked one after another ───────── */
 
+  /* The eight questions, as they are set out in full on the guide page. */
+  const QUESTIONS = [
+    "What exactly was measured?",
+    "Under what conditions?",
+    "How sure are you?",
+    "What did not work?",
+    "Can this be compared with anything else?",
+    "Is the test set really unseen?",
+    "Am I allowed to learn from it?",
+    "Why was this experiment run?",
+  ];
+
   function initAsk() {
     const out = document.getElementById("ask-q");
     const hero = document.querySelector(".hero");
     if (!out || !hero || reduceMotion) return;
-    const questions = Array.from(document.querySelectorAll(".q h3")).map((h) => h.textContent.trim());
+    const onPage = Array.from(document.querySelectorAll(".q h3")).map((h) => h.textContent.trim());
+    const questions = onPage.length >= 2 ? onPage : QUESTIONS;
     if (questions.length < 2) return;
 
     let index = Math.max(0, questions.indexOf(out.textContent.trim()));
@@ -470,7 +483,7 @@
     };
 
     const markdown = () => {
-      const lines = ["# AI-readiness checklist", "", "From https://science4ai.org/#checklist", ""];
+      const lines = ["# AI-readiness checklist", "", "From https://science4ai.org/guide/#checklist", ""];
       root.querySelectorAll(".check-group").forEach((group) => {
         lines.push("## " + group.dataset.key);
         group.querySelectorAll(".check").forEach((item) => {
