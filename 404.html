@@ -22,17 +22,20 @@
   .plate span.is-hit { background: #fde725; box-shadow: 0 0 1.4rem -0.1rem rgba(253, 231, 37, 0.75); }
   h1 { margin: 0; font: 600 clamp(2.75rem, 9vw, 4.5rem)/0.98 "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; letter-spacing: -0.042em; }
   p { margin: 1.25rem 0 0; color: #bdb7c9; }
-  .btn { display: inline-block; margin-top: 1.9rem; padding: 0.8rem 1.3rem; border-radius: 999px; background: #f5f2f8; color: #0b0613; font-weight: 500; font-size: 0.9375rem; line-height: 1.2; text-decoration: none; }
-  .btn:hover { background: #dedae6; }
-  .btn:focus-visible { outline: 3px solid #fde725; outline-offset: 3px; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.9rem; }
+  .links a { display: inline-block; padding: 0.8rem 1.3rem; border-radius: 999px; background: #f5f2f8; color: #0b0613; font-weight: 500; font-size: 0.9375rem; line-height: 1.2; text-decoration: none; }
+  .links a + a { background: transparent; color: #f5f2f8; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28); }
+  .links a:hover { background: #dedae6; }
+  .links a + a:hover { background: rgba(255, 255, 255, 0.08); color: #f5f2f8; }
+  .links a:focus-visible { outline: 3px solid #fde725; outline-offset: 3px; }
 </style>
 </head>
 <body>
 <main>
   <div class="plate" aria-hidden="true"><span></span><span></span><span></span><span></span><span class="is-hit"></span><span></span><span></span><span></span><span></span></div>
   <h1>This well is empty.</h1>
-  <p>There is no page at this address. The guide is on the Science4AI home page.</p>
-  <a class="btn" href="/">Go to the guide</a>
+  <p>There is no page at this address. Two pages exist: the argument, and the practical guide.</p>
+  <p class="links"><a href="/">The argument</a><a href="/guide/">Practical guide</a></p>
 </main>
 </body>
 </html>

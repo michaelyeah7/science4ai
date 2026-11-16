@@ -8,9 +8,10 @@ It is a static site. There is no build step and nothing to install.
 ## Layout
 
 ```
-index.html            the whole guide (all copy lives here)
+index.html            the argument: what is missing from the record and what we build
+guide/index.html      the practical guide: eight questions, levels, checklist, standards
 404.html              not-found page
-assets/css/site.css   styles
+assets/css/site.css   styles for both pages
 assets/js/site.js     the interactive plate, the checklist, navigation, motion
 assets/fonts/         IBM Plex Serif, Sans and Mono (SIL Open Font License, see OFL.txt)
 assets/img/           favicon, social preview image, affiliation logos
@@ -25,18 +26,23 @@ robots.txt, sitemap.xml
 python3 -m http.server 8000
 ```
 
-Then open <http://localhost:8000/>. Opening `index.html` straight from disk also works.
+Then open <http://localhost:8000/>. Use a server rather than opening the file from disk:
+both pages link to `/assets/...`, which only resolves over HTTP.
 
 ## Editing
 
-- **Copy.** Edit `index.html`. Each section is marked with a comment. Every factual claim
-  carries a numbered reference; if you add a claim, add its source to the list under
-  `<section id="references">` and link to it with `<sup><a href="#ref-N">N</a></sup>`.
+- **Copy.** Edit `index.html` or `guide/index.html`. Each section is marked with a comment.
+  Every factual claim carries a numbered reference; if you add a claim, add its source to that
+  page's list under `<section id="references">` and link to it with
+  `<sup><a href="#ref-N">N</a></sup>`. The two pages number their references independently.
 - **The plate in the hero** is illustrative data generated in `assets/js/site.js`
   (`buildWells`). The wells named in `HITS`, `FIXED` and `FAILS` are fixed by hand; the
   rest come from a seeded generator, so the plate is the same on every visit.
-- **Checklist.** The sixteen items are plain HTML in `index.html` under
+- **Checklist.** The sixteen items are plain HTML in `guide/index.html` under
   `<section id="checklist">`. Marks are kept in the visitor's own browser.
+- **What belongs on which page.** `index.html` answers "what are these people doing and
+  why"; it should stay short enough to read in one sitting. Anything a practitioner would
+  work through rather than read goes in `guide/index.html`.
 - **Affiliation logos.** The row under the hero (`affil-list` in `index.html`) shows
   institution names as text. To show a logo instead, put the official file in
   `assets/img/logos/` and replace the name inside its link:
@@ -48,8 +54,8 @@ Then open <http://localhost:8000/>. Opening `index.html` straight from disk also
   The row sits on a dark background, so use each institution's own light or reversed
   logo file, unaltered, and check its brand guidelines first.
 - **Styles and scripts.** After changing `assets/css/site.css` or `assets/js/site.js`,
-  raise the `?v=` number on their two links in `index.html`. Returning visitors then get
-  the new files at once instead of a cached copy.
+  raise the `?v=` number on their links in `index.html` **and** `guide/index.html`. Returning
+  visitors then get the new files at once instead of a cached copy.
 - **Look.** Colors, type sizes and spacing are the variables at the top of
   `assets/css/site.css`. Dark and light sections share the same components: a section is
   dark with `class="section band-dark"` and light with `band-light` or `band-wash`.
